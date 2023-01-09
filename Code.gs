@@ -13,28 +13,34 @@ function getStarredThreads() {
   console.log(threadSubjects);
 }
 
-
 function removeQuotes_(text){
-  //const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
-  //const text = sheet.getRange('A2').getValue();
   let cleanText = text.replace(/^>.*\n?/gm, '').trim();
-  console.log("clean:", cleanText);
+  console.log("cleaned:", cleanText);
   return cleanText
 }
 
-function replyToThread() {
-  const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
-
+function getThreadMessages_(){
   const threadId = "184648512fcffa88";
   const thread = GmailApp.getThreadById(threadId);
   const messages = thread.getMessages();
+  return messages
+}
+
+function listMessages() {
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  const messages = getThreadMessages_();
   for(i=1; i<messages.length; i++){
     const messageOnly = removeQuotes_(messages[i].getPlainBody());
     sheet.getRange(i+1,1).setValue(messageOnly);
   }
+  SpreadsheetApp.flush();
+}
+
+function replyToThread() {
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  const messages = getThreadMessages_();
 
   const data = sheet.getDataRange().getValues();
-
   const lastColumn = sheet.getLastColumn();
   const headersText = sheet.getRange(1,1,1,lastColumn).getValues();
   const headers = {};
@@ -44,29 +50,35 @@ function replyToThread() {
   }
   //console.log("header:index", headers);
   /*
-  { email_Col: 0,
-    message_Col: 1,
-    'message translated_Col': 2,
+  { message_Col: 0,
+    reply_Col: 1,
+    'reply translated_Col': 2,
     status_Col: 3 }
   */
-
-  for(i=1; i<data.length; i++){
-    let emailAddress = data[i][headers['email_Col']];
-    let reply = data[i][headers['reply_Col']];
-    let replyJapanese = googleTranslate(reply);
-    let status = data[i][headers['status_Col']];
-
-    let messageAll = reply
-    messageAll += '\n'
-    messageAll += replyJapanese
-    console.log("message:", messageAll);
-
-    //GmailApp.sendEmail(emailAddress,null,messageAll,{threadId:emailThreadId});
-  }
   
+  for(i=1; i<data.length-1; i++){
+    let reply = data[i][headers['reply_Col']];
+    let replyJapanese = googleTranslate_(reply);
+    sheet.getRange(i+1, headers['reply translated_Col']+1).setValue(replyJapanese);
+    //let status = messages[i][headers['status_Col']];
+
+    let messageAll = "";
+    if(reply !== ''){
+      console.log("reply:", reply);
+      messageAll += reply;
+      messageAll += '\n\n';
+      messageAll += replyJapanese;
+      console.log("message:", messageAll);
+      messages[i].reply(messageAll);
+      sheet.getRange(i+1, headers['status_Col']+1).setValue("Sent")
+    }
+  }
 }
 
-function googleTranslate(text){
+function googleTranslate_(text){
   let textToJapanese = LanguageApp.translate(text,'en','ja');
+  if(text){
+    console.log("translation:", textToJapanese);
+  }
   return textToJapanese;
 }
