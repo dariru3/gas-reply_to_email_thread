@@ -20,7 +20,7 @@ function removeQuotes_(text){
 }
 
 function getThreadMessages_(){
-  const threadId = "184648512fcffa88";
+  const threadId = "1859533f39c4783e";
   const thread = GmailApp.getThreadById(threadId);
   const messages = thread.getMessages();
   return messages
@@ -56,14 +56,16 @@ function replyToThread() {
     status_Col: 3 }
   */
   
-  for(i=1; i<data.length-1; i++){
+  for(i=1; i<data.length; i++){
+    //let message = data[i][headers['message_Col']];
+    //console.log("message:", message)
     let reply = data[i][headers['reply_Col']];
     let replyJapanese = googleTranslate_(reply);
     sheet.getRange(i+1, headers['reply translated_Col']+1).setValue(replyJapanese);
-    //let status = messages[i][headers['status_Col']];
+    let status = data[i][headers['status_Col']];
 
     let messageAll = "";
-    if(reply !== ''){
+    if(reply !== '' && status == ''){
       console.log("reply:", reply);
       messageAll += reply;
       messageAll += '\n\n';
