@@ -55,19 +55,6 @@ function getStarredThreads() {
 }
 
 /**
- * Helper function to shorted imported email body.
- * Removes quotes of previous emails by searching for lines
- * beginning with ">"
- * @param text {string} Text containing email body
- * @returns Email body without quotes, lines starting with ">"
- */
-function removeQuotes_(text){
-  let cleanText = text.replace(/^>.*\n?/gm, '') // search for line that starts with ">" (and new line)
-  .trim(); // remove whitespace before and after
-  return cleanText
-}
-
-/**
  * Helper function.
  * @returns an array of messages in a given thread.
  */
@@ -88,7 +75,7 @@ function listMessages() {
   const startRow = 1;
   const startColumn = 1;
   for(i=1; i<messages.length; i++){
-    const messageCleaned = removeQuotes_(messages[i].getPlainBody());
+    const messageCleaned = messages[i].getPlainBody().replace(/^>.*\n?/gm, '').trim();
     sheet.getRange(i+startRow,startColumn).setValue(messageCleaned);
   }
   SpreadsheetApp.flush();
