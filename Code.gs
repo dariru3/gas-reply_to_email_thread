@@ -1,3 +1,24 @@
+function onOpen() {
+  var ui = SpreadsheetApp.getUi();
+  // Or DocumentApp or FormApp.
+  ui.createMenu('Import Email Thread')
+      .addItem('1. Get email thread in Starred items', 'menuItem1_')
+      .addItem('2. Copy thread id, update script', 'menuItem1_')
+      .addSeparator()
+      .addItem('3. List messages', 'listMessages')
+      .addItem('4. Add reply next to message', 'menuItem2_')
+      .addItem('5. Send replies', 'replyToThread')
+      .addToUi();
+}
+
+function menuItem1_() {
+  SpreadsheetApp.getUi().alert('Open App Script');
+}
+
+function menuItem2_(){
+  SpreadsheetApp.getUi().alert('Enter reply in column B');
+}
+
 function getStarredThreads() {
   const threads = GmailApp.getStarredThreads();
   let threadIds = [];
