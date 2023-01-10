@@ -109,7 +109,8 @@ function replyToThread() {
       messageAll += reply;
       messageAll += '\n\n';
       messageAll += replyJapanese;
-      messageAll += "\n(Google Translateの翻訳です)"
+      messageAll += "\n(Google Translateの翻訳です)\n\n"
+      messageAll += messages[i].getPlainBody();
       // send reply to single recipient
       messages[i].reply(messageAll);
       // update spreadsheet to show email has been sent
