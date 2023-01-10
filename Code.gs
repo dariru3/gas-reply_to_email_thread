@@ -59,7 +59,7 @@ function getStarredThreads() {
  * @returns an array of messages in a given thread.
  */
 function getThreadMessages_(){
-  const threadId = "1859533f39c4783e"; // get from getStarredThreads()
+  const threadId = "1858072fa93b0587"; // get from getStarredThreads()
   const thread = GmailApp.getThreadById(threadId);
   const messages = thread.getMessages();
   return messages
@@ -109,6 +109,7 @@ function replyToThread() {
       messageAll += reply;
       messageAll += '\n\n';
       messageAll += replyJapanese;
+      messageAll += "\n(Google Translateの翻訳です)"
       // send reply to single recipient
       messages[i].reply(messageAll);
       // update spreadsheet to show email has been sent
